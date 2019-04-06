@@ -8,7 +8,7 @@ class ImageLoader(
     private val web: IWebRepository,
     private val local: IFileRepository,
     private val db: IDatabaseRepository,
-    private val asyncContext: CoroutineScope,
+    private val scope: CoroutineScope,
     private val log: (String) -> Unit) {
 
     suspend fun load(card: Card): Bitmap? {
@@ -31,10 +31,10 @@ class ImageLoader(
         return bitmap
     }
 
-    private fun cache(card: Card, bitmap: Bitmap) = asyncContext.launch {
+    private fun cache(card: Card, bitmap: Bitmap) = scope.launch {
         try {
-            val updatedCard = card.copy(imageLocalPath = local.generatePath())
-            db.updateCard(updatedCard, fields = arrayOf("imageLocalPath"))
+            val updatedCard = card.copy(imageLocalPath = local.generatePath(), shown = true)
+            db.updateCard(updatedCard, fields = arrayOf("imageLocalPath", "shown"))
             local.writeImage(updatedCard.imageLocalPath as String, bitmap)
         } catch (e: DBRepoError) {
             log("Can't update card in DB")

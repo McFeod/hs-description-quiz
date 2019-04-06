@@ -8,5 +8,8 @@ data class Card (
     val locale: String,
     val description: String? = null,
     val imageURL: String? = null,
-    val imageLocalPath: String? = null
-): Serializable
+    val imageLocalPath: String? = null,
+    val shown: Boolean = false
+): Serializable {
+    fun shouldFetchDetails(): Boolean = this.description == null || this.imageURL == null
+}
