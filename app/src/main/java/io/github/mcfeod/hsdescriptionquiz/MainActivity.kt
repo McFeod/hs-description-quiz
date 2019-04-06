@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         }
 
 //        settingsButton.setOnClickListener {
-//            startActivity(CardActivityIntent("example name", "example url", "example path").pack(this))
+//            startActivity(CardActivityIntent(Card("", "example", "ruRu", imageURL = "")).pack(this))
 //        }
     }
 }

@@ -3,20 +3,15 @@ package io.github.mcfeod.hsdescriptionquiz
 import android.content.Context
 import android.content.Intent
 
-data class CardActivityIntent(val cardName: String, val imageURL: String, val localPath: String?) {
+data class CardActivityIntent(val card: Card) {
     fun pack(context: Context): Intent {
         val result = Intent(context, CardActivity::class.java)
-        result.putExtra("cardName", cardName)
-        result.putExtra("imageURL", imageURL)
-        result.putExtra("localPath", localPath)
+        result.putExtra(CARD_KEY, card)
         return result
     }
 
     companion object {
-        fun unpack(intent: Intent): CardActivityIntent = CardActivityIntent(
-            intent.getStringExtra("cardName"),
-            intent.getStringExtra("imageURL"),
-            intent.getStringExtra("localPath")
-        )
+        private const val CARD_KEY = "CARD"
+        fun unpack(intent: Intent): Card = intent.getSerializableExtra(CARD_KEY) as Card
     }
 }
