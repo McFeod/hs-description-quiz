@@ -18,6 +18,6 @@
             android:layout_width="64dp"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
-            app:srcCompat="@drawable/ic_clear_black_24dp"
+            app:srcCompat="@drawable/ic_clear"
             android:layout_height="match_parent"/>
 </LinearLayout>
