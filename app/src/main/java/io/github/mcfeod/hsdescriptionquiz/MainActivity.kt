@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Window
 import kotlinx.android.synthetic.main.activity_main.settingsButton
+import kotlinx.android.synthetic.main.activity_main.mainRecycler
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -15,5 +16,9 @@ class MainActivity : AppCompatActivity() {
         settingsButton.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
+
+//        settingsButton.setOnClickListener {
+//            startActivity(CardActivityIntent("example name", "example url", "example path").pack(this))
+//        }
     }
 }
