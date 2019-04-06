@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">HS Description Quiz</string>
+    <string name="main_screen_title">Карты</string>
+    <string name="settings_screen_title">Настройки</string>
+    <string name="settings_locale_label">Выбор языка для карт</string>
+    <string name="settings_amount_label">Число вопросов</string>
+    <string name="settings_amount_hint">Число вопросов</string>
+    <string name="settings_locale_ru">Русский</string>
+    <string name="settings_locale_en">Английский (США)</string>
+    <string name="settings_locale_de">Немецкий</string>
+    <string name="settings_locale_fr">Французский</string>
 </resources>

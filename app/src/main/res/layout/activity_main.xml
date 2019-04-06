@@ -11,21 +11,29 @@
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
             android:background="@color/colorPrimary">
-            <RelativeLayout
+            <LinearLayout
                     android:layout_width="match_parent"
+                    android:orientation="horizontal"
                     android:layout_height="match_parent">
+                    <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="@string/main_screen_title"
+                            android:textColor="@color/colorHeaderText"
+                            android:textSize="24sp"
+                            android:layout_gravity="center"/>
                     <androidx.appcompat.widget.AppCompatImageView
-                            android:id="@+id/preferencesButton"
+                            android:id="@+id/settingsButton"
                             android:layout_width="48dp"
                             android:layout_height="48dp"
-                            android:layout_alignParentEnd="true"
                             android:layout_marginEnd="8dp"
                             android:background="@color/colorPrimary"
-                            app:srcCompat="@drawable/ic_settings"                    />
-            </RelativeLayout>
+                            app:srcCompat="@drawable/ic_settings"/>
+            </LinearLayout>
     </androidx.appcompat.widget.Toolbar>
     <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/main_recycler"
+            android:id="@+id/mainRecycler"
             android:layout_height="0dp"
             android:layout_width="match_parent"
             android:layout_weight="1"
