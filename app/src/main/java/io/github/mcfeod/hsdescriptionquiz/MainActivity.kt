@@ -3,7 +3,6 @@ package io.github.mcfeod.hsdescriptionquiz
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.view.Window
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.settingsButton
 import kotlinx.android.synthetic.main.activity_main.mainRecycler
@@ -16,7 +15,6 @@ class MainActivity : AsyncActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
 
         mainRecycler.layoutManager = LinearLayoutManager(this)
