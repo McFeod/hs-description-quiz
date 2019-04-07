@@ -8,6 +8,8 @@ import kotlinx.android.synthetic.main.activity_main.settingsButton
 import kotlinx.android.synthetic.main.activity_main.mainRecycler
 import kotlinx.coroutines.launch
 
+const val CARDS_KEY = "CARDS"
+
 class MainActivity : AsyncActivity() {
     private lateinit var locale: String
     private lateinit var loader: CardLoader
@@ -33,7 +35,14 @@ class MainActivity : AsyncActivity() {
         adapter.onRemoveListener = { index -> swapCard(index) }
 
         initEnvironment()
-        loadCards(itemCount)
+        if (savedInstanceState != null && savedInstanceState.containsKey(CARDS_KEY)) {
+            val cards = savedInstanceState.getParcelableArray(CARDS_KEY)
+            if (cards != null) {
+                adapter.resetCards(cards)
+            }
+        } else {
+            loadCards(itemCount)
+        }
     }
 
     private fun initEnvironment() {
@@ -50,5 +59,10 @@ class MainActivity : AsyncActivity() {
     private fun swapCard(index: Int) = launch {
         adapter.removeByIndex(index)
         loader.getRandomCards(1, locale) { card: Card -> adapter.addCard(card) }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        outState.putParcelableArray(CARDS_KEY, adapter.cardsAsArray())
+        super.onSaveInstanceState(outState)
     }
 }

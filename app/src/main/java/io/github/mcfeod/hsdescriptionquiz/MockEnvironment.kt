@@ -5,16 +5,11 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import kotlinx.coroutines.delay
 import java.io.ByteArrayOutputStream
-import java.util.concurrent.atomic.AtomicInteger
-import kotlin.random.Random
 
 class MockEnvironment(private val context: Context): IDatabaseRepository, IFileRepository, IWebRepository {
-    private val random = Random(42)
-    private var counter = AtomicInteger(0)
-
     private fun randomCard(full: Boolean = false): Card {
-        val number = counter.incrementAndGet()
-        val allFields = full || random.nextBoolean()
+        val number = (1..1000).random()
+        val allFields = full || (0..1).random() == 1
         val id = "id_$number"
         val name = "Card $number"
         if (!allFields) {
@@ -33,7 +28,7 @@ class MockEnvironment(private val context: Context): IDatabaseRepository, IFileR
     override fun updateCard(card: Card, fields: Array<String>?) {}
 
     override suspend fun fetchCard(id: String, locale: String): Card {
-        delay(random.nextLong(100, 1000))
+        delay((100..1000).random().toLong())
         return randomCard(true)
     }
 
@@ -50,7 +45,7 @@ class MockEnvironment(private val context: Context): IDatabaseRepository, IFileR
     override fun generatePath(): String = ""
 
     override suspend fun fetchImage(url: String): ByteArray {
-        delay(random.nextLong(100, 1000))
+        delay((100..1000).random().toLong())
         val stream = ByteArrayOutputStream()
         BitmapFactory.decodeResource(context.resources, R.drawable.example).compress(Bitmap.CompressFormat.PNG, 100, stream)
         return stream.toByteArray()

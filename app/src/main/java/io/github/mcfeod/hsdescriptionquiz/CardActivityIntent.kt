@@ -12,6 +12,6 @@ data class CardActivityIntent(val card: Card) {
 
     companion object {
         private const val CARD_KEY = "CARD"
-        fun unpack(intent: Intent): Card = intent.getSerializableExtra(CARD_KEY) as Card
+        fun unpack(intent: Intent): Card = intent.getParcelableExtra(CARD_KEY) as Card
     }
 }

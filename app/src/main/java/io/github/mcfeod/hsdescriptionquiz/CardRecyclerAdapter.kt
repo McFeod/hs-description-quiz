@@ -1,5 +1,6 @@
 package io.github.mcfeod.hsdescriptionquiz
 
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +17,14 @@ class CardRecyclerAdapter : RecyclerView.Adapter<CardRecyclerAdapter.ViewHolder>
         val index = cards.size
         cards.add(index, card)
         notifyItemInserted(index)
+    }
 
+    fun cardsAsArray(): Array<Card> = cards.toTypedArray()
+
+    fun resetCards(newCards: Array<Parcelable>?) {
+        cards.clear()
+        newCards?.forEach { if (it is Card) cards.add(it) }
+        notifyDataSetChanged()
     }
 
     fun removeByIndex(index: Int) {
