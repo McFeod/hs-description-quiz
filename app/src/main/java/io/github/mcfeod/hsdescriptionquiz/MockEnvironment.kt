@@ -5,14 +5,15 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import kotlinx.coroutines.delay
 import java.io.ByteArrayOutputStream
+import java.util.concurrent.atomic.AtomicInteger
 import kotlin.random.Random
 
 class MockEnvironment(private val context: Context): IDatabaseRepository, IFileRepository, IWebRepository {
     private val random = Random(42)
-    private var counter = 0
+    private var counter = AtomicInteger(0)
 
     private fun randomCard(full: Boolean = false): Card {
-        val number = ++counter
+        val number = counter.incrementAndGet()
         val allFields = full || random.nextBoolean()
         val id = "id_$number"
         val name = "Card $number"
