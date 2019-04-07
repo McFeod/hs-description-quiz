@@ -2,15 +2,18 @@ package io.github.mcfeod.hsdescriptionquiz
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
 
+@Entity(primaryKeys = ["id", "locale"])
 data class Card(
-    val id: String,
-    val name: String,
-    val locale: String,
-    val description: String? = null,
-    val imageURL: String? = null,
-    val imageLocalPath: String? = null,
-    val shown: Boolean = false
+    @ColumnInfo(name = "id") val id: String,
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "locale") val locale: String,
+    @ColumnInfo(name = "description") val description: String? = null,
+    @ColumnInfo(name = "url") val imageURL: String? = null,
+    @ColumnInfo(name = "path") val imageLocalPath: String? = null,
+    @ColumnInfo(name = "shown") val shown: Boolean = false
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() as String,

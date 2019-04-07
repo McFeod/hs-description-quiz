@@ -1,5 +1,6 @@
 package io.github.mcfeod.hsdescriptionquiz
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -34,7 +35,7 @@ class MainActivity : AsyncActivity() {
         adapter.onClickListener = { card -> startActivity(CardActivityIntent(card).pack(this)) }
         adapter.onRemoveListener = { index -> swapCard(index) }
 
-        initEnvironment()
+        initEnvironment(this)
         if (savedInstanceState != null && savedInstanceState.containsKey(CARDS_KEY)) {
             val cards = savedInstanceState.getParcelableArray(CARDS_KEY)
             if (cards != null) {
@@ -45,20 +46,21 @@ class MainActivity : AsyncActivity() {
         }
     }
 
-    private fun initEnvironment() {
-        // todo implement db and web interactions
-        val env = MockEnvironment(this)
-        loader = CardLoader(env, env, this) { msg: String -> Log.e("CARD_LOADER", msg)}
+    private fun initEnvironment(context: Context) {
+        // todo implement web interactions
+        val db = CardDatabase.getInstance(context).cardDao()
+        val env = MockEnvironment(context)
+        loader = CardLoader(env, db, env, this) { Log.e("CARD_LOADER", it) }
     }
 
     private fun loadCards(count: Int) = launch {
-        loader.downloadCardsIfNeeded(locale)
-        loader.getRandomCards(count, locale) { card: Card -> adapter.addCard(card) }
+        loader.downloadCardsIfNeededAsync(locale).await()
+        loader.getRandomCards(count, locale) { adapter.addCard(it) }
     }
 
     private fun swapCard(index: Int) = launch {
         adapter.removeByIndex(index)
-        loader.getRandomCards(1, locale) { card: Card -> adapter.addCard(card) }
+        loader.getRandomCards(1, locale) { adapter.addCard(it) }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

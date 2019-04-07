@@ -6,7 +6,7 @@ class WebRepoError: Exception()
 
 interface IWebRepository {
     @Throws(WebRepoError::class)
-    suspend fun fetchAllCards(locale: String): Array<Card>
+    suspend fun fetchAllCards(locale: String): List<Card>
 
     @Throws(WebRepoError::class)
     suspend fun fetchCard(id: String, locale: String): Card

@@ -6,39 +6,28 @@ import android.graphics.BitmapFactory
 import kotlinx.coroutines.delay
 import java.io.ByteArrayOutputStream
 
-class MockEnvironment(private val context: Context): IDatabaseRepository, IFileRepository, IWebRepository {
-    private fun randomCard(full: Boolean = false): Card {
-        val number = (1..1000).random()
+class MockEnvironment(private val context: Context): IFileRepository, IWebRepository {
+    private fun randomCard(full: Boolean = false, locale: String = "ruRU"): Card {
+        val number = (1..1000000).random()
         val allFields = full || (0..1).random() == 1
         val id = "id_$number"
         val name = "Card $number"
         if (!allFields) {
-            return Card(id, name, "")
+            return Card(id, name, locale)
         }
-        return Card(id, name, "", "Description of card #$number", "", "")
+        return Card(id, name, locale, "Description of card #$number", "", "")
     }
-
-
-    override fun dropAllCards(locale: String) {}
-
-    override fun getRandomCards(amount: Int, locale: String): List<Card> = (1..amount).map { randomCard() }
-
-    override fun writeCards(cards: Array<Card>) {}
-
-    override fun updateCard(card: Card, fields: Array<String>?) {}
 
     override suspend fun fetchCard(id: String, locale: String): Card {
         delay((100..1000).random().toLong())
-        return randomCard(true)
+        return randomCard(true, locale)
     }
 
     override fun readImage(path: String): ByteArray {
         throw FileRepoError()
     }
 
-    override suspend fun fetchAllCards(locale: String): Array<Card> = arrayOf()
-
-    override fun getCard(id: String, locale: String): Card? = null
+    override suspend fun fetchAllCards(locale: String): List<Card> = (1..100).map { randomCard(false, locale) }
 
     override fun writeImage(path: String, image: ByteArray) {}
 
@@ -51,5 +40,5 @@ class MockEnvironment(private val context: Context): IDatabaseRepository, IFileR
         return stream.toByteArray()
     }
 
-    override fun cardsCached(locale: String): Boolean = true
+    override fun deleteImage(path: String) {}
 }

@@ -27,9 +27,10 @@ class CardActivity : AsyncActivity() {
     }
 
     private fun initEnvironment() {
-        // todo implement db, file and web interactions
+        // todo file and web interactions
+        val db = CardDatabase.getInstance(this).cardDao()
         val env = MockEnvironment(this)
-        loader = ImageLoader(env, env, env, this) { msg: String -> Log.e("IMAGE_LOADER", msg)}
+        loader = ImageLoader(env, env, db, this) { Log.e("IMAGE_LOADER", it) }
     }
 
     private fun loadImage(card: Card) = launch {

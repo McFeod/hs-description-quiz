@@ -11,5 +11,8 @@ interface IFileRepository {
     @Throws(FileRepoError::class)
     fun readImage(path: String): ByteArray
 
+    @Throws(FileRepoError::class)
+    fun deleteImage(path: String)
+
     fun generatePath(): String
 }

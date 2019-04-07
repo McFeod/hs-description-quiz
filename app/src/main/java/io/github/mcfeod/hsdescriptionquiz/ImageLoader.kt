@@ -33,10 +33,8 @@ class ImageLoader(
     private fun cache(card: Card, image: ByteArray) = scope.launch {
         try {
             val updatedCard = card.copy(imageLocalPath = local.generatePath(), shown = true)
-            db.updateCard(updatedCard, fields = arrayOf("imageLocalPath", "shown"))
+            db.updateCard(updatedCard)
             local.writeImage(updatedCard.imageLocalPath as String, image)
-        } catch (e: DBRepoError) {
-            log("Can't update card in DB")
         } catch (e: FileRepoError) {
             log("Can't write local image")
         }
