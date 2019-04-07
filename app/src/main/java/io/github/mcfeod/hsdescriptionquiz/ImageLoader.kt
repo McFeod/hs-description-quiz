@@ -1,6 +1,5 @@
 package io.github.mcfeod.hsdescriptionquiz
 
-import android.graphics.Bitmap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -11,8 +10,8 @@ class ImageLoader(
     private val scope: CoroutineScope,
     private val log: (String) -> Unit) {
 
-    suspend fun load(card: Card): Bitmap? {
-        var bitmap: Bitmap? = null
+    suspend fun load(card: Card): ByteArray? {
+        var image: ByteArray? = null
         if (card.imageLocalPath != null) {
             try {
                 return local.readImage(card.imageLocalPath)
@@ -22,20 +21,20 @@ class ImageLoader(
         }
         if (card.imageURL != null) {
             try {
-                bitmap = web.fetchImage(card.imageURL)
-                cache(card, bitmap)
+                image = web.fetchImage(card.imageURL)
+                cache(card, image)
             } catch (e: WebRepoError) {
                 log("Can't download image")
             }
         }
-        return bitmap
+        return image
     }
 
-    private fun cache(card: Card, bitmap: Bitmap) = scope.launch {
+    private fun cache(card: Card, image: ByteArray) = scope.launch {
         try {
             val updatedCard = card.copy(imageLocalPath = local.generatePath(), shown = true)
             db.updateCard(updatedCard, fields = arrayOf("imageLocalPath", "shown"))
-            local.writeImage(updatedCard.imageLocalPath as String, bitmap)
+            local.writeImage(updatedCard.imageLocalPath as String, image)
         } catch (e: DBRepoError) {
             log("Can't update card in DB")
         } catch (e: FileRepoError) {

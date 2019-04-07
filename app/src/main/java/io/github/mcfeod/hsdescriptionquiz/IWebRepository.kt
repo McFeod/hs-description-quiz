@@ -1,6 +1,5 @@
 package io.github.mcfeod.hsdescriptionquiz
 
-import android.graphics.Bitmap
 import java.lang.Exception
 
 class WebRepoError: Exception()
@@ -13,5 +12,5 @@ interface IWebRepository {
     suspend fun fetchCard(id: String, locale: String): Card
 
     @Throws(WebRepoError::class)
-    suspend fun fetchImage(url: String): Bitmap
+    suspend fun fetchImage(url: String): ByteArray
 }

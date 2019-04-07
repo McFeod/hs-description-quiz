@@ -1,5 +1,6 @@
 package io.github.mcfeod.hsdescriptionquiz
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -9,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_card.cardTitle
 
 class CardActivity : AsyncActivity() {
     private lateinit var loader: ImageLoader
+    private var image: ByteArray? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +28,10 @@ class CardActivity : AsyncActivity() {
     }
 
     private fun loadImage(card: Card) = launch {
-        cardImage.setImageBitmap(loader.load(card))
-        cardImage.visibility = View.VISIBLE
+        image = loader.load(card)
+        if (image != null) {
+            cardImage.setImageBitmap(BitmapFactory.decodeByteArray(image, 0, image!!.size))
+            cardImage.visibility = View.VISIBLE
+        }
     }
 }

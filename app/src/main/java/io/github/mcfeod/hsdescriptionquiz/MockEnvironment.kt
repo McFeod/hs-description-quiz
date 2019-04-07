@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import kotlinx.coroutines.delay
+import java.io.ByteArrayOutputStream
 import kotlin.random.Random
 
 class MockEnvironment(private val context: Context): IDatabaseRepository, IFileRepository, IWebRepository {
@@ -35,7 +36,7 @@ class MockEnvironment(private val context: Context): IDatabaseRepository, IFileR
         return randomCard(true)
     }
 
-    override fun readImage(path: String): Bitmap {
+    override fun readImage(path: String): ByteArray {
         throw FileRepoError()
     }
 
@@ -43,13 +44,15 @@ class MockEnvironment(private val context: Context): IDatabaseRepository, IFileR
 
     override fun getCard(id: String, locale: String): Card? = null
 
-    override fun writeImage(path: String, bitmap: Bitmap) {}
+    override fun writeImage(path: String, image: ByteArray) {}
 
     override fun generatePath(): String = ""
 
-    override suspend fun fetchImage(url: String): Bitmap {
+    override suspend fun fetchImage(url: String): ByteArray {
         delay(random.nextLong(100, 1000))
-        return BitmapFactory.decodeResource(context.resources, R.drawable.example)
+        val stream = ByteArrayOutputStream()
+        BitmapFactory.decodeResource(context.resources, R.drawable.example).compress(Bitmap.CompressFormat.PNG, 100, stream)
+        return stream.toByteArray()
     }
 
     override fun cardsCached(locale: String): Boolean = true
