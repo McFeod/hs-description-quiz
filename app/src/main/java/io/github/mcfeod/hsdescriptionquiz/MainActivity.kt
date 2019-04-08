@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.settingsButton
 import kotlinx.android.synthetic.main.activity_main.mainRecycler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 const val CARDS_KEY = "CARDS"
@@ -47,14 +48,15 @@ class MainActivity : AsyncActivity() {
     }
 
     private fun initEnvironment(context: Context) {
-        // todo implement web interactions
+        // todo implement file interactions
         val db = CardDatabase.getInstance(context).cardDao()
-        val env = MockEnvironment(context)
-        loader = CardLoader(env, db, env, this) { Log.e("CARD_LOADER", it) }
+        val web = WebRepository(getString(R.string.rapid_api_key), Dispatchers.IO)
+        val env = MockEnvironment()
+        loader = CardLoader(web, db, env, this) { Log.e("CARD_LOADER", it) }
     }
 
     private fun loadCards(count: Int) = launch {
-        loader.downloadCardsIfNeededAsync(locale).await()
+        loader.downloadCardsIfNeeded(locale)
         loader.getRandomCards(count, locale) { adapter.addCard(it) }
     }
 

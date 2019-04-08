@@ -22,8 +22,8 @@ interface IDatabaseRepository {
     @Update
     suspend fun updateCard(card: Card)
 
-    @Query("SELECT * FROM card WHERE locale = :locale AND id IN (:ids)")
-    suspend fun getCards(locale: String, ids: List<String>): List<Card>
+    @Query("SELECT * FROM card WHERE locale = :locale")
+    suspend fun getCards(locale: String): List<Card>
 
     @Query("SELECT * FROM card WHERE id = :id AND locale = :locale LIMIT 1")
     suspend fun getCard(id: String, locale: String): Card?

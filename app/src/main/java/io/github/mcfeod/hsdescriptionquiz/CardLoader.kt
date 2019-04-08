@@ -3,6 +3,7 @@ package io.github.mcfeod.hsdescriptionquiz
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class CardLoader(
     private val web: IWebRepository,
@@ -11,12 +12,12 @@ class CardLoader(
     private val scope: CoroutineScope,
     private val log: (String) -> Unit) {
 
-    suspend fun downloadCardsIfNeededAsync (locale: String) = scope.async {
+    suspend fun downloadCardsIfNeeded (locale: String) = withContext(scope.coroutineContext) {
         if (!db.cardsCached(locale)) {
             try {
                 val cards = web.fetchAllCards(locale)
                 val existingVersions = mutableMapOf<String, Card>()
-                db.getCards(locale, cards.map { it.id }).forEach { existingVersions[it.id] = it }
+                db.getCards(locale).forEach { existingVersions[it.id] = it }
                 db.dropAllCards(locale)
                 existingVersions.forEach {
                     val path = it.value.imageLocalPath

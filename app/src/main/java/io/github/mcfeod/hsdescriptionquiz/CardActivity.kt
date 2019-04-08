@@ -7,6 +7,7 @@ import android.view.View
 import kotlinx.coroutines.launch
 import kotlinx.android.synthetic.main.activity_card.cardImage
 import kotlinx.android.synthetic.main.activity_card.cardTitle
+import kotlinx.coroutines.Dispatchers
 
 const val IMAGE_KEY = "IMAGE"
 
@@ -27,10 +28,11 @@ class CardActivity : AsyncActivity() {
     }
 
     private fun initEnvironment() {
-        // todo file and web interactions
+        // todo file interactions
         val db = CardDatabase.getInstance(this).cardDao()
-        val env = MockEnvironment(this)
-        loader = ImageLoader(env, env, db, this) { Log.e("IMAGE_LOADER", it) }
+        val env = MockEnvironment()
+        val web = WebRepository(getString(R.string.rapid_api_key), Dispatchers.IO)
+        loader = ImageLoader(web, env, db, this) { Log.e("IMAGE_LOADER", it) }
     }
 
     private fun loadImage(card: Card) = launch {
