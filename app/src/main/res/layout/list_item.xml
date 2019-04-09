@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="80dp">
+    <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/listItemText"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:textSize="20sp"
+            tools:text="Здесь будет описание карты"
+            android:layout_marginStart="16dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"/>
+    <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/listItemDelete"
+            android:layout_width="64dp"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp"
+            app:srcCompat="@drawable/ic_clear"
+            android:layout_height="match_parent"/>
+</LinearLayout>
