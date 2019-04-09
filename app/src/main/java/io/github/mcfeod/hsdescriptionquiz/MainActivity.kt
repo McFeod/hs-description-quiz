@@ -31,7 +31,7 @@ class MainActivity : AsyncActivity() {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
-        adapter.onClickListener = { card -> startActivity(CardActivityIntent(card).pack(this)) }
+        adapter.onClickListener = { card -> startActivity(CardActivityIntent.pack(this, card)) }
         adapter.onRemoveListener = { index -> swapCard(index) }
 
         initEnvironment()
