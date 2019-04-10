@@ -9,8 +9,5 @@ interface IWebRepository {
     suspend fun fetchAllCards(locale: String): List<Card>
 
     @Throws(WebRepoError::class)
-    suspend fun fetchCard(id: String, locale: String): Card
-
-    @Throws(WebRepoError::class)
-    suspend fun fetchImage(url: String): ByteArray
+    suspend fun fetchImage(card: Card, quality: String): ByteArray
 }

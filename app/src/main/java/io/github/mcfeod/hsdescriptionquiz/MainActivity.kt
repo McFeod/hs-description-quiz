@@ -48,11 +48,9 @@ class MainActivity : AsyncActivity() {
     }
 
     private fun initEnvironment(context: Context) {
-        // todo implement file interactions
         val db = CardDatabase.getInstance(context).cardDao()
-        val web = WebRepository(getString(R.string.rapid_api_key), Dispatchers.IO)
-        val env = MockEnvironment()
-        loader = CardLoader(web, db, env, this) { Log.e("CARD_LOADER", it) }
+        val web = WebRepository(Dispatchers.IO)
+        loader = CardLoader(web, db, this) { Log.e("CARD_LOADER", it) }
     }
 
     private fun loadCards(count: Int) = launch {

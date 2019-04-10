@@ -3,63 +3,45 @@ package io.github.mcfeod.hsdescriptionquiz
 import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.ResponseBody
 import org.json.JSONArray
 import org.json.JSONException
-import org.json.JSONObject
-import java.io.ByteArrayOutputStream
 import kotlin.coroutines.CoroutineContext
 
-const val API_HOST = "omgvamp-hearthstone-v1.p.rapidapi.com"
 
-class WebRepository(private val apiKey: String, private val context: CoroutineContext) : IWebRepository {
+class WebRepository(private val context: CoroutineContext) : IWebRepository {
     private val client = OkHttpClient()
 
-    private suspend fun getAsync(path: String, locale: String) = withContext(context) {
-        client.newCall(
-            Request.Builder()
-                .url("https://$API_HOST$path?locale=$locale&collectible=1")
-                .addHeader("X-RapidAPI-Host", API_HOST)
-                .addHeader("X-RapidAPI-Key", apiKey)
-                .build()
-        ).execute().body()!!.string()
+    private suspend fun get(url: String): ResponseBody = withContext(context ){
+        val request = Request.Builder().url(url).build()
+        val response = client.newCall(request).execute()
+        val body: ResponseBody = response.body()!!
+        if (!response.isSuccessful || response.body() == null) {
+            throw WebRepoError()
+        }
+        return@withContext body
     }
 
     override suspend fun fetchAllCards(locale: String): List<Card> = withContext(context) {
-        val response = JSONObject(getAsync("/cards", locale))
-        response.keys().asSequence()
-            .map { cardSetName -> response.getJSONArray(cardSetName) }
-            .flatMap { jsonArray -> (0 until jsonArray.length()).map { jsonArray.getJSONObject(it) }.asSequence() }
+        val url = "https://api.hearthstonejson.com/v1/latest/$locale/cards.collectible.json"
+        val array = JSONArray(get(url).string())
+        (0 until array.length()).map { array.getJSONObject(it) }.asSequence()
             .map {
                 Card(
-                    id = it.getString("cardId"),
+                    id = it.getString("id"),
                     name = it.getString("name"),
-                    locale = it.getString("locale")
+                    locale = locale,
+                    description = try {
+                        it.getString("flavor")
+                    } catch (e: JSONException) {
+                        "missed"
+                    }
                 )
             }
             .toList()
     }
 
-    override suspend fun fetchCard(id: String, locale: String): Card = withContext(context) {
-        val response = JSONArray(getAsync("/cards/$id", locale)).getJSONObject(0)
-try {
-            Card(
-                id = response.getString("cardId"),
-                name = response.getString("name"),
-                locale = response.getString("locale"),
-                description = response.getString("flavor"),
-                imageURL = response.getString("img")
-            )
-        } catch (e: JSONException) {
-            throw WebRepoError()
-        }
-    }
-
-    override suspend fun fetchImage(url: String): ByteArray = withContext(context) {
-        ByteArrayOutputStream().apply {
-            client.newCall(
-                Request.Builder().url(url).build()
-            ).execute().body()!!.byteStream().copyTo(this)
-        }.toByteArray()
+    override suspend fun fetchImage(card: Card, quality: String): ByteArray = withContext(context) {
+        get("https://art.hearthstonejson.com/v1/render/latest/${card.locale}/$quality/${card.id}.png").bytes()
     }
 }
-
