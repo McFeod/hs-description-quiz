@@ -6,7 +6,6 @@ apply plugin: 'kotlin-kapt'
 android {
     compileSdkVersion 28
     defaultConfig {
-        resValue "string", "rapid_api_key", api_key
         applicationId 'io.github.mcfeod.hsdescriptionquiz'
         vectorDrawables.useSupportLibrary = true
         minSdkVersion 18
