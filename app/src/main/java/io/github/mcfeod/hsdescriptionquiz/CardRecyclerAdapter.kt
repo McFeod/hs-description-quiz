@@ -1,6 +1,6 @@
 package io.github.mcfeod.hsdescriptionquiz
 
-import android.os.Parcelable
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -54,7 +54,7 @@ class CardRecyclerAdapter : RecyclerView.Adapter<CardRecyclerAdapter.ViewHolder>
     override fun getItemCount(): Int = cards.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.itemView.findViewById<TextView>(R.id.listItemText).text = cards[position].description
+        holder.itemView.findViewById<TextView>(R.id.listItemText).text = Html.fromHtml(cards[position].description)
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
