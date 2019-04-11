@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 const val CARDS_KEY = "CARDS"
 
 class MainActivity : AsyncActivity() {
+    private var itemCount = 0
     private lateinit var locale: String
     private lateinit var loader: CardLoader
     private lateinit var adapter: CardRecyclerAdapter
@@ -27,23 +28,28 @@ class MainActivity : AsyncActivity() {
 
         val preferences = Preferences(this)
         locale = preferences.locale
-        val itemCount = preferences.itemCount
+        itemCount = preferences.itemCount
 
         settingsButton.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
-        adapter.onClickListener = { card -> startActivity(CardActivityIntent.pack(this, card)) }
+        adapter.onClickListener = {
+            index, card -> run {
+                startActivity(CardActivityIntent.pack(this, card))
+                this.swapCard(index)
+            }
+        }
         adapter.onRemoveListener = { index -> swapCard(index) }
 
         initEnvironment(this)
         if (savedInstanceState != null && savedInstanceState.containsKey(CARDS_KEY)) {
-            val cards = savedInstanceState.getParcelableArray(CARDS_KEY)
-            if (cards != null) {
-                adapter.resetCards(cards)
+            val cardsArray = savedInstanceState.getParcelableArray(CARDS_KEY)
+            if (cardsArray != null) {
+                adapter.resetCards(cardsArray.map { it as Card })
             }
         } else {
-            loadCards(itemCount)
+            loadCards()
         }
     }
 
@@ -53,18 +59,31 @@ class MainActivity : AsyncActivity() {
         loader = CardLoader(web, db, this) { Log.e("CARD_LOADER", it) }
     }
 
-    private fun loadCards(count: Int) = launch {
+    private fun loadCards() = launch {
         loader.downloadCardsIfNeeded(locale)
-        loader.getRandomCards(count, locale) { adapter.addCard(it) }
+        adapter.resetCards(loader.getRandomCards(itemCount, locale))
     }
 
     private fun swapCard(index: Int) = launch {
         adapter.removeByIndex(index)
-        loader.getRandomCards(1, locale) { adapter.addCard(it) }
+        val cards = loader.getRandomCards(1, locale)
+        if (cards.isNotEmpty()) {
+            adapter.addCard(cards[0])
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelableArray(CARDS_KEY, adapter.cardsAsArray())
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onResume() {
+        val preferences = Preferences(this)
+        if (preferences.locale != locale || preferences.itemCount != itemCount) {
+            locale = preferences.locale
+            itemCount = preferences.itemCount
+            loadCards()
+        }
+        super.onResume()
     }
 }

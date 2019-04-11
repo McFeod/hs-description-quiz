@@ -25,7 +25,5 @@ class CardLoader(
         }
     }
 
-    suspend fun getRandomCards(count: Int, locale: String, onLoad: (Card) -> Unit) {
-        db.getRandomCards(count, locale).forEach(onLoad)
-    }
+    suspend fun getRandomCards(count: Int, locale: String): List<Card> = db.getRandomCards(count, locale)
 }

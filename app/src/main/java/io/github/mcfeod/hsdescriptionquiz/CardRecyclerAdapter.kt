@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class CardRecyclerAdapter : RecyclerView.Adapter<CardRecyclerAdapter.ViewHolder>() {
     private val cards = mutableListOf<Card>()
-    var onClickListener: ((card: Card) -> Unit)? = null
+    var onClickListener: ((index: Int, card: Card) -> Unit)? = null
     var onRemoveListener: ((index: Int) -> Unit)? = null
 
     fun addCard(card: Card) {
@@ -21,9 +21,9 @@ class CardRecyclerAdapter : RecyclerView.Adapter<CardRecyclerAdapter.ViewHolder>
 
     fun cardsAsArray(): Array<Card> = cards.toTypedArray()
 
-    fun resetCards(newCards: Array<Parcelable>?) {
+    fun resetCards(newCards: List<Card>) {
         cards.clear()
-        newCards?.forEach { if (it is Card) cards.add(it) }
+        cards.addAll(0, newCards)
         notifyDataSetChanged()
     }
 
@@ -39,7 +39,7 @@ class CardRecyclerAdapter : RecyclerView.Adapter<CardRecyclerAdapter.ViewHolder>
         view.findViewById<TextView>(R.id.listItemText).setOnClickListener {
             val index = viewHolder.adapterPosition
             if (index != RecyclerView.NO_POSITION) {
-                onClickListener?.invoke(cards[index])
+                onClickListener?.invoke(index, cards[index])
             }
         }
         view.findViewById<ImageView>(R.id.listItemDelete).setOnClickListener {

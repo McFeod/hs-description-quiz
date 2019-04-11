@@ -34,10 +34,11 @@ class WebRepository(private val context: CoroutineContext) : IWebRepository {
                     description = try {
                         it.getString("flavor")
                     } catch (e: JSONException) {
-                        "missed"
+                        ""
                     }
                 )
             }
+            .filter { it.description != "" }
             .toList()
     }
 
