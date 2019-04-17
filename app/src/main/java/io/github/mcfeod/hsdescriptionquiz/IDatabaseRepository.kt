@@ -1,23 +1,36 @@
 package io.github.mcfeod.hsdescriptionquiz
 
-class DBRepoError: Exception()
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Update
 
+
+@Dao
 interface IDatabaseRepository {
-    @Throws(DBRepoError::class)
-    fun getRandomCards(amount: Int, locale: String): List<Card>
+    @Query("""
+        SELECT * FROM card
+        WHERE locale = :locale
+        ORDER BY shown, RANDOM()
+        LIMIT :amount
+    """)
+    suspend fun getRandomCards(amount: Int, locale: String): List<Card>
 
-    @Throws(DBRepoError::class)
-    fun writeCards(cards: Array<Card>)
+    @Insert
+    suspend fun writeCards(cards: Iterable<Card>)
 
-    @Throws(DBRepoError::class)
-    fun updateCard(card: Card, fields: Array<String>? = null)
+    @Update
+    suspend fun updateCard(card: Card)
 
-    @Throws(DBRepoError::class)
-    fun getCard(id: String, locale: String): Card?
+    @Query("SELECT * FROM card WHERE locale = :locale")
+    suspend fun getCards(locale: String): List<Card>
 
-    @Throws(DBRepoError::class)
-    fun dropAllCards(locale: String)
+    @Query("SELECT * FROM card WHERE id = :id AND locale = :locale LIMIT 1")
+    suspend fun getCard(id: String, locale: String): Card?
 
-    @Throws(DBRepoError::class)
-    fun cardsCached(locale: String): Boolean
+    @Query("DELETE FROM card WHERE locale = :locale")
+    suspend fun dropAllCards(locale: String)
+
+    @Query("SELECT EXISTS (SELECT id FROM card WHERE locale = :locale LIMIT 1)")
+    suspend fun cardsCached(locale: String): Boolean
 }

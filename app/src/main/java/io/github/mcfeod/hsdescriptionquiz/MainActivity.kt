@@ -1,16 +1,19 @@
 package io.github.mcfeod.hsdescriptionquiz
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.settingsButton
 import kotlinx.android.synthetic.main.activity_main.mainRecycler
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 const val CARDS_KEY = "CARDS"
 
 class MainActivity : AsyncActivity() {
+    private var itemCount = 0
     private lateinit var locale: String
     private lateinit var loader: CardLoader
     private lateinit var adapter: CardRecyclerAdapter
@@ -25,44 +28,62 @@ class MainActivity : AsyncActivity() {
 
         val preferences = Preferences(this)
         locale = preferences.locale
-        val itemCount = preferences.itemCount
+        itemCount = preferences.itemCount
 
         settingsButton.setOnClickListener {
             startActivity(Intent(this, SettingsActivity::class.java))
         }
 
-        adapter.onClickListener = { card -> startActivity(CardActivityIntent.pack(this, card)) }
+        adapter.onClickListener = {
+            index, card -> run {
+                startActivity(CardActivityIntent.pack(this, card))
+                this.swapCard(index)
+            }
+        }
         adapter.onRemoveListener = { index -> swapCard(index) }
 
-        initEnvironment()
+        initEnvironment(this)
         if (savedInstanceState != null && savedInstanceState.containsKey(CARDS_KEY)) {
-            val cards = savedInstanceState.getParcelableArray(CARDS_KEY)
-            if (cards != null) {
-                adapter.resetCards(cards)
+            val cardsArray = savedInstanceState.getParcelableArray(CARDS_KEY)
+            if (cardsArray != null) {
+                adapter.resetCards(cardsArray.map { it as Card })
             }
         } else {
-            loadCards(itemCount)
+            loadCards()
         }
     }
 
-    private fun initEnvironment() {
-        // todo implement db and web interactions
-        val env = MockEnvironment(this)
-        loader = CardLoader(env, env, this) { msg: String -> Log.e("CARD_LOADER", msg)}
+    private fun initEnvironment(context: Context) {
+        val db = CardDatabase.getInstance(context).cardDao()
+        val web = WebRepository(Dispatchers.IO)
+        loader = CardLoader(web, db, this) { Log.e("CARD_LOADER", it) }
     }
 
-    private fun loadCards(count: Int) = launch {
+    private fun loadCards() = launch {
         loader.downloadCardsIfNeeded(locale)
-        loader.getRandomCards(count, locale) { card: Card -> adapter.addCard(card) }
+        adapter.resetCards(loader.getRandomCards(itemCount, locale))
     }
 
     private fun swapCard(index: Int) = launch {
         adapter.removeByIndex(index)
-        loader.getRandomCards(1, locale) { card: Card -> adapter.addCard(card) }
+        val cards = loader.getRandomCards(1, locale)
+        if (cards.isNotEmpty()) {
+            adapter.addCard(cards[0])
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.putParcelableArray(CARDS_KEY, adapter.cardsAsArray())
         super.onSaveInstanceState(outState)
+    }
+
+    override fun onResume() {
+        val preferences = Preferences(this)
+        if (preferences.locale != locale || preferences.itemCount != itemCount) {
+            locale = preferences.locale
+            itemCount = preferences.itemCount
+            loadCards()
+        }
+        super.onResume()
     }
 }

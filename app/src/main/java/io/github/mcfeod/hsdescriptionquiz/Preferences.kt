@@ -9,6 +9,7 @@ class Preferences (context: Context) {
         const val PREFS_FILENAME: String = "io.github.mcfeod.hsdescriptionquiz.prefs"
         const val LOCALE = "locale"
         const val ITEM_COUNT = "item_count"
+        const val IMAGE_QUALITY = "image_quality"
     }
 
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_FILENAME, Context.MODE_PRIVATE)
@@ -20,4 +21,8 @@ class Preferences (context: Context) {
     var locale: String
         get() = prefs.getString(LOCALE, "ruRU") as String
         set(value) = prefs.edit().putString(LOCALE, value).apply()
+
+    var quality: String
+        get() = prefs.getString(IMAGE_QUALITY, "256x") as String
+        set(value) = prefs.edit().putString(IMAGE_QUALITY, value).apply()
 }

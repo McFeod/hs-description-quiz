@@ -2,23 +2,22 @@ package io.github.mcfeod.hsdescriptionquiz
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.ColumnInfo
+import androidx.room.Entity
 
+@Entity(primaryKeys = ["id", "locale"])
 data class Card(
-    val id: String,
-    val name: String,
-    val locale: String,
-    val description: String? = null,
-    val imageURL: String? = null,
-    val imageLocalPath: String? = null,
-    val shown: Boolean = false
+    @ColumnInfo(name = "id") val id: String,
+    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "locale") val locale: String,
+    @ColumnInfo(name = "description") val description: String,
+    @ColumnInfo(name = "shown") val shown: Boolean = false
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString() as String,
         parcel.readString() as String,
         parcel.readString() as String,
-        parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
+        parcel.readString() as String,
         parcel.readByte() != 0.toByte()
     )
 
@@ -27,8 +26,6 @@ data class Card(
         parcel.writeString(name)
         parcel.writeString(locale)
         parcel.writeString(description)
-        parcel.writeString(imageURL)
-        parcel.writeString(imageLocalPath)
         parcel.writeByte(if (shown) 1 else 0)
     }
 
@@ -45,6 +42,4 @@ data class Card(
             return arrayOfNulls(size)
         }
     }
-
-    fun shouldFetchDetails(): Boolean = this.description == null || this.imageURL == null
 }

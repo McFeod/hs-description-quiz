@@ -9,4 +9,8 @@
     <string name="settings_locale_en">Английский (США)</string>
     <string name="settings_locale_de">Немецкий</string>
     <string name="settings_locale_fr">Французский</string>
+    <string name="settings_quality_label">Качество изображений</string>
+    <string name="settings_quality_256">256x384</string>
+    <string name="settings_quality_512">512x768</string>
+    <string name="settings_quality_original">Оригинал</string>
 </resources>
