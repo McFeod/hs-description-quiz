@@ -29,7 +29,7 @@ class CardActivity : AsyncActivity() {
     }
 
     private fun loadImage(card: Card) = launch {
-//        try {
+        try {
             if (image == null) {
                 image = WebRepository(Dispatchers.IO).fetchImage(card, preferences.quality)
             }
@@ -37,9 +37,9 @@ class CardActivity : AsyncActivity() {
                 cardImage.setImageBitmap(BitmapFactory.decodeByteArray(image, 0, image!!.size))
             }
             cardImage.visibility = View.VISIBLE
-//        } catch (e: WebRepoError) {
-//            Log.e("LOAD_IMAGE", "Can't download image")
-//        }
+        } catch (e: WebRepoError) {
+            Log.e("LOAD_IMAGE", "Can't download image")
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
