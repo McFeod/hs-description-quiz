@@ -25,7 +25,6 @@ class SettingsActivity : AppCompatActivity() {
         RadioGroupWrapper<String>(qualityRadioGroup)
             .add(R.id.quality256x, "256x")
             .add(R.id.quality512x, "512x")
-            .add(R.id.qualityOriginal, "orig")
             .setup(preferences.quality) { preferences.quality = it }
     }
 }

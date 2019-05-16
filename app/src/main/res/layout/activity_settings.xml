@@ -111,11 +111,6 @@
                         android:layout_width="wrap_content"
                         android:text="@string/settings_quality_512"
                         android:layout_height="wrap_content"/>
-                <RadioButton
-                        android:id="@+id/qualityOriginal"
-                        android:layout_width="wrap_content"
-                        android:text="@string/settings_quality_original"
-                        android:layout_height="wrap_content"/>
             </RadioGroup>
         </LinearLayout>
     </LinearLayout>
